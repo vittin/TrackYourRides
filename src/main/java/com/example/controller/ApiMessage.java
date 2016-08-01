@@ -75,9 +75,9 @@ public class ApiMessage {
         propertyValueMap.put("nextPage", nextPage);
     }
 
-    private static void createBody(String description){
+    private static void createBody(String message){
         propertyValueMap = new HashMap<>();
-        propertyValueMap.put("description", description);
+        propertyValueMap.put("message", message);
     }
 
     private static String stringify(Map<String, ?> map) {

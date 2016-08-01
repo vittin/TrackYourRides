@@ -37,8 +37,19 @@ var Form = {
                 'Content-Type': 'application/json;charset=UTF-8'
             }
         })
-            .done(function(data, textStatus, xhr){})
-            .fail(function(data, textStatus, xhr){})
+            .done(function(response){
+                var responseBody = JSON.parse(response.responseText);
+                window.location.replace(responseBody.nextPage);
+            })
+            .fail(function(response){
+                var responseBody = JSON.parse(response.responseText);
+                if (response.status === 409){
+                    Form.showMessage(responseBody.message);
+                }
+                else if (response.status === 422){
+                    Form.showMessage(responseBody.message);
+                }
+            });
     },
 
     toJson: function(){
@@ -55,6 +66,10 @@ var Form = {
 
     toArray: function(){
         return $("#registerForm").serializeArray();
+    },
+
+    showMessage: function(message){
+        $("#info").text(message);
     }
 
 };

@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
  */
 
 @RestController
-@RequestMapping("users/")
+@RequestMapping(value = "api/users")
 public class UserRestController {
 
     private final UserServiceImpl userService;
@@ -27,7 +27,22 @@ public class UserRestController {
         this.userService = userService;
     }
 
-    @RequestMapping(value = "login", method = RequestMethod.POST)
+    @RequestMapping(value = "", method = RequestMethod.POST)
+    public HttpEntity<String> register(User presentUser){
+
+        String email = presentUser.getEmail();
+
+        if (!userService.userIsUnique(presentUser)){
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(ApiMessage.registerFailed());
+        } else if (!userService.emailIsValid(email)){
+            return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body(ApiMessage.incorrectEmail());
+        } else {
+            userService.createUser(presentUser);
+            return ResponseEntity.status(HttpStatus.CREATED).body(ApiMessage.userCreated(presentUser));
+        }
+    }
+
+    @RequestMapping(value = "/login", method = RequestMethod.POST)
     public HttpEntity<String> login(User presentUser, @Nullable String previousPage){
 
         User user = userService.findUser(presentUser.getUsername());
@@ -46,20 +61,5 @@ public class UserRestController {
             return ResponseEntity.status(HttpStatus.CONFLICT).body(ApiMessage.loginFailed());
         }
 
-    }
-
-    @RequestMapping(value = "users", method = RequestMethod.POST)
-    public HttpEntity<String> register(User presentUser){
-
-        String email = presentUser.getEmail();
-
-        if (!userService.userIsUnique(presentUser)){
-            return ResponseEntity.status(HttpStatus.CONFLICT).body(ApiMessage.registerFailed());
-        } else if (!userService.emailIsValid(email)){
-            return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body(ApiMessage.incorrectEmail());
-        } else {
-            userService.createUser(presentUser);
-            return ResponseEntity.status(HttpStatus.CREATED).body(ApiMessage.userCreated(presentUser));
-        }
     }
 }

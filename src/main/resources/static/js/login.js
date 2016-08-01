@@ -10,14 +10,23 @@ $("#login").click(function(e){
     var json = JSON.stringify(userInfo);
 
     $.ajax({
-        url: "/api/login",
+        url: "/api/users/login",
         method: "POST",
         data: json
     }).done(function(response) {
-        console.log("done, " + json)
-        console.log("response: " + response)
+        var responseBody = JSON.parse(response.responseText);
+        if (responseBody.nextPage !== undefined){
+            window.location.replace(responseBody.nextPage);
+        } else {
+            window.location.replace("/");
+        }
+
     }).fail(function(response) {
-        console.log("failed, " + json)
-        console.log("response: " + response)
+        var responseBody = JSON.parse(response.responseText);
+        showMessage(responseBody.message);
     });
 });
+
+function showMessage(message){
+    $("#info").text(message);
+}
