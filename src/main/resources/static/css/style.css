@@ -1,0 +1,13 @@
+.background-image {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-size: contain;
+    background: url(http://streetsalive.ca/hope/wp-content/uploads/2014/03/Able-Bike-Poster-2014-feature.jpeg) no-repeat;
+}
+
+.horizontal-center {
+    margin-top: 20vh;
+}

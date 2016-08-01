@@ -6,9 +6,8 @@ package com.example.service;
 
 public interface AuthService {
 
-    boolean checkCredentials(String login, String password);
+    String encrypt(String plainText);
 
-    boolean hasActiveSession(String login, String token);
+    String createToken(long userId);
 
-    String createNewToken(String login);
 }

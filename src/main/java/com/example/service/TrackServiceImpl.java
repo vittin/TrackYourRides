@@ -1,6 +1,5 @@
 package com.example.service;
 
-import com.example.model.Session;
 import com.example.model.Track;
 import org.springframework.stereotype.Component;
 
@@ -14,12 +13,12 @@ import java.util.List;
 public class TrackServiceImpl implements TrackService {
 
     @Override
-    public List<Track> getAllTracks(Session session) {
+    public List<Track> getAllTracks(String session) {
         return null;
     }
 
     @Override
-    public Long addTrack(Track track, Session session) {
+    public Long addTrack(Track track, String session) {
         return null;
     }
 

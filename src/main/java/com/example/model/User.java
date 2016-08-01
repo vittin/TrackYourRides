@@ -1,10 +1,11 @@
 package com.example.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.validation.constraints.NotNull;
-import java.sql.Date;
 
 /**
  * Created by Mateusz on 2016-07-28.
@@ -17,39 +18,43 @@ public class User {
     @GeneratedValue
     private long id;
     @NotNull
-    private String login;
+    private String username;
     @NotNull
+    @JsonIgnore
     private String password;
-    private String privateKey; //unused
-    private String token;
-    private Date tokenDate;
+    @NotNull
+    private String email;
 
-    public User(){}
+    User(){}
 
-    public User(String login, String password) {
-        this.login = login;
+    public User(String username, String password, String email) {
+        this.username = username;
         this.password = password;
+        this.email = email;
     }
 
-    public void setPrivateKey(String privateKey){
-        this.privateKey = privateKey;
-    }
-    public String getPrivateKey(){
-        return this.privateKey;
+    public long getId() {
+        return id;
     }
 
-    public void setToken(String token){
-        this.token = token;
-    }
-    public String getToken(){
-        return this.token;
+    public String getUsername() {
+        return username;
     }
 
-    public void setTokenDate(Date tokenDate) {
-        this.tokenDate = tokenDate;
-    }
-    public Date getTokenDate() {
-        return tokenDate;
+    public String getPassword() {
+        return password;
     }
 
+    public String getEmail() {
+        return email;
+    }
+
+    @Override
+    public String toString() {
+        return "User{" +
+                "id=" + id +
+                ", username='" + username + '\'' +
+                ", email='" + email + '\'' +
+                '}';
+    }
 }

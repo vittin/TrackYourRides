@@ -1,6 +1,5 @@
 package com.example.service;
 
-import com.example.model.Session;
 import com.example.model.Track;
 
 import java.util.List;
@@ -11,9 +10,9 @@ import java.util.List;
 
 public interface TrackService {
 
-    List<Track> getAllTracks(Session session);
+    List<Track> getAllTracks(String session);
 
-    Long addTrack(Track track, Session session);  //id;
+    Long addTrack(Track track, String session);  //id;
 
     String trackOwner(long trackId);
 

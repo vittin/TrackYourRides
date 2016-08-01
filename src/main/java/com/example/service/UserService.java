@@ -1,41 +1,22 @@
 package com.example.service;
 
 import com.example.model.User;
-import org.apache.tomcat.jni.Time;
-import org.springframework.stereotype.Component;
-
-import java.util.UUID;
-import java.sql.Date;
 
 /**
- * Created by Mateusz on 2016-07-28.
+ * Created by Mateusz on 2016-08-01.
  */
 
-@Component
-public class UserService {
+public interface UserService {
 
-    public User newUser(String login, String password){
-        User user = new User();
-        String privateKey = generatePrivateKey();
-        user.setPrivateKey(privateKey);
-        newSession(user);
-        return user;
-    }
+    boolean userIsUnique(User user);
 
-    private String generatePrivateKey() {
+    User findUser(String username);
 
-        return UUID.randomUUID().toString();
-    }
+    String createTokenFor(Long userId);
 
-    private void newSession(User user) {
-        Date date = new Date(Time.now());
-        String token = generateToken(date);
-        user.setTokenDate(date);
-        user.setToken(token);
-    }
+    User createUser(User user);
 
-    private String generateToken(Date date) {
+    boolean emailIsValid(String email);
 
-        return UUID.randomUUID().toString();
-    }
+    boolean identityIsConfirmed(User user);
 }
