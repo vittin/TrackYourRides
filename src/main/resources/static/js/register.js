@@ -38,7 +38,7 @@ var Form = {
             }
         })
             .done(function(response){
-                var responseBody = JSON.parse(response.responseText);
+                var responseBody = JSON.parse(response);
                 window.location.replace(responseBody.nextPage);
             })
             .fail(function(response){

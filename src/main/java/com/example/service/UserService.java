@@ -10,13 +10,13 @@ public interface UserService {
 
     boolean userIsUnique(User user);
 
-    User findUser(String username);
+    User findUser(User user);
 
-    String createTokenFor(Long userId);
+    String createTokenFor(Long userId, String sessionId);
 
     User createUser(User user);
 
     boolean emailIsValid(String email);
 
-    boolean identityIsConfirmed(User user);
+    boolean canUserLogIn(User user);
 }

@@ -1,6 +1,7 @@
 package com.example.service;
 
 import com.example.model.Track;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -11,6 +12,13 @@ import java.util.List;
 
 @Component
 public class TrackServiceImpl implements TrackService {
+
+    private final AuthService authService;
+
+    @Autowired
+    TrackServiceImpl(AuthService authService){
+        this.authService = authService;
+    }
 
     @Override
     public List<Track> getAllTracks(String session) {
@@ -29,11 +37,6 @@ public class TrackServiceImpl implements TrackService {
 
     @Override
     public List<Track> deleteTrack(long trackId) {
-        return null;
-    }
-
-    @Override
-    public String trackOwner(long trackId) {
         return null;
     }
 }

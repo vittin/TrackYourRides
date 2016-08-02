@@ -1,7 +1,10 @@
 package com.example.service;
 
+import com.example.model.Token;
+import com.example.model.TokenRepository;
 import com.example.model.User;
 import com.example.model.UserRepository;
+import com.sun.istack.internal.Nullable;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -12,47 +15,84 @@ import org.springframework.stereotype.Component;
 @Component
 public class UserServiceImpl implements UserService {
 
-    private UserRepository repo;
-    private AuthService authService;
+    private final UserRepository repo;
+    private final AuthService authService;
+    private final TokenRepository tokenRepo;
 
     @Autowired
-    UserServiceImpl(UserRepository repo, AuthService authService){
+    UserServiceImpl(UserRepository repo, TokenRepository tokenRepo, AuthService authService){
         this.repo = repo;
+        this.tokenRepo = tokenRepo;
         this.authService = authService;
     }
 
     @Override
-    public boolean userIsUnique(User user){
-        return false;
+    public boolean userIsUnique(User user)
+    {
+
+        User userFromRepo = findUser(user);
+
+        return (userFromRepo == null);
     }
 
     @Override
-    public User findUser(String username){
-        return repo.findByUsername(username);
+    public User findUser(User givenUser){
+
+
+        System.out.println(givenUser);
+        String username = givenUser.getUsername().toLowerCase();
+        String email = givenUser.getEmail().toLowerCase();
+
+        User user = repo.findByUsername(username);
+        if (user == null){
+            user = repo.findByEmail(email);
+        }
+
+        return user;
     }
 
     @Override
-    public String createTokenFor(Long id) {
-        return "";
+    public String createTokenFor(Long id, String sessionId) {
+        Token token = authService.createToken(id, sessionId);
+        tokenRepo.save(token);
+        return token.toString();
     }
 
     @Override
     public User createUser(User user) {
+        String plainTextPassword = user.getPassword();
+        user.setPassword(authService.encrypt(plainTextPassword));
         return repo.save(user);
     }
 
     @Override
-    public boolean identityIsConfirmed(User user){
-        String username = user.getUsername();
-        String password = authService.encrypt(user.getPassword());
+    public boolean canUserLogIn(User user){
 
-        return findUser(username).getPassword().equals(password);
+        String password = user.getPassword();
+
+        User userFromRepo = findUser(user);
+        if (userFromRepo == null){
+            return false;
+        }
+
+
+        String passwordHash = userFromRepo.getPassword();
+
+
+        System.out.println(password);
+        System.out.println(passwordHash);
+
+        return authService.validatePassword(password, passwordHash);
     }
 
     @Override
-    public boolean emailIsValid(String email) {
-        String emailPattern = "^[_A-Za-z0-9-\\\\+]+(\\\\.[_A-Za-z0-9-]+)*\n" +
-                "      @[A-Za-z0-9-]+(\\\\.[A-Za-z0-9]+)*(\\\\.[A-Za-z]{2,})$;";
+    public boolean emailIsValid(@Nullable String email) {
+
+        if(email == null){
+            return false;
+        }
+
+        String emailPattern = "(^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\\.[a-zA-Z0-9-.]+$)";
         return email.matches(emailPattern);
     }
 }

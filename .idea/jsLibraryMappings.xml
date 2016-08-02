@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="JavaScriptLibraryMappings">
+    <file url="file://$PROJECT_DIR$/src/main/resources/static/js/login.js" libraries="{jquery}" />
+    <file url="file://$PROJECT_DIR$/src/main/resources/static/js/register.js" libraries="{jquery}" />
+    <file url="file://$PROJECT_DIR$/src/main/resources/static/js/selectPage.js" libraries="{jquery}" />
+  </component>
+</project>

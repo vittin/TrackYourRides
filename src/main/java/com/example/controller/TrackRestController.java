@@ -1,14 +1,17 @@
 package com.example.controller;
 
+import com.example.model.Token;
 import com.example.model.Track;
 import com.example.service.TrackService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpSession;
 import java.net.URI;
 import java.util.List;
 
@@ -22,7 +25,7 @@ import java.util.List;
 public class TrackRestController {
 
     private final TrackService trackService;
-    private String session;
+    private String session = "";
 
     @Autowired
     TrackRestController(TrackService trackService){
@@ -30,7 +33,8 @@ public class TrackRestController {
     }
 
     @RequestMapping(value = "tracks", method = RequestMethod.GET)
-    public HttpEntity<List<Track>> getTracks(){
+    public HttpEntity<List<Track>> getTracks(HttpHeaders headers){
+
 
         if (!isValidSession(session)){
             return notValidSession();
@@ -90,9 +94,13 @@ public class TrackRestController {
         return true;
     }
 
-    private boolean isValidSession(String session){
+    private boolean isValidSession(HttpSession session, Token token){
         return false;
     }
+
+    private boolean isValidSession(String session){
+        return false;
+    } //todo: remove it;
 
     private <T> ResponseEntity<T> notValidSession(){
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);

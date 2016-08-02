@@ -25,11 +25,20 @@ public class ApiMessage {
         return stringify(propertyValueMap);
     }
 
-    static String loginSuccessful(@Nullable String previousPage){
+    static String loginSuccessful(String previousPage){
 
         String description = "Login successful. You will be redirect to previous page.";
 
         createBody(description, previousPage);
+
+        return stringify(propertyValueMap);
+    }
+
+    static String loginSuccessful(){
+
+        String description = "Login successful. You will be redirect to main page.";
+
+        createBody(description);
 
         return stringify(propertyValueMap);
     }
@@ -88,6 +97,7 @@ public class ApiMessage {
             json = "{'internalServerError': 'JsonProcessingException'}";
         }
 
+        System.out.println(json);
         return json;
     }
 }

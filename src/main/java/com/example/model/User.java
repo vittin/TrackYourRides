@@ -1,7 +1,6 @@
 package com.example.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
@@ -18,19 +17,23 @@ public class User {
     @GeneratedValue
     private long id;
     @NotNull
+    @Column(unique = true)
     private String username;
     @NotNull
-    @JsonIgnore
     private String password;
-    @NotNull
+    @Column(unique = true)
     private String email;
 
     User(){}
 
     public User(String username, String password, String email) {
+        this(username, password);
+        this.email = email;
+    }
+
+    protected User(String username, String password){
         this.username = username;
         this.password = password;
-        this.email = email;
     }
 
     public long getId() {
@@ -56,5 +59,13 @@ public class User {
                 ", username='" + username + '\'' +
                 ", email='" + email + '\'' +
                 '}';
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
     }
 }

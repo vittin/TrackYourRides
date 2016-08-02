@@ -14,8 +14,6 @@ public interface TrackService {
 
     Long addTrack(Track track, String session);  //id;
 
-    String trackOwner(long trackId);
-
     List<Track> deleteTrack(long trackId); //all tracks;
 
     Track updateTrack(Long trackId);
