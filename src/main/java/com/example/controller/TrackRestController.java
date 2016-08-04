@@ -2,17 +2,16 @@ package com.example.controller;
 
 import com.example.model.Token;
 import com.example.model.Track;
+import com.example.model.User;
 import com.example.service.TrackService;
+import com.example.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.HttpSession;
-import java.net.URI;
 import java.util.List;
 
 /**
@@ -24,85 +23,100 @@ import java.util.List;
 @Scope("session")
 public class TrackRestController {
 
+    private static final String NO_CONTENT = "";
     private final TrackService trackService;
-    private String session = "";
+    private final UserService userService;
+
+    private final static ResponseEntity AUTHENTICATION_ERROR =
+            ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(ApiMessage.noLoggedUser());
+
+    private Long userId;
+    private Token token;
+
 
     @Autowired
-    TrackRestController(TrackService trackService){
+    TrackRestController(TrackService trackService, UserService userService){
         this.trackService = trackService;
+        this.userService = userService;
     }
 
-    @RequestMapping(value = "tracks", method = RequestMethod.GET)
-    public HttpEntity<List<Track>> getTracks(HttpHeaders headers){
 
+    @RequestMapping(value = "", method = RequestMethod.GET)
+    public HttpEntity<?> getTracks(@CookieValue(value = "sessionId", defaultValue = NO_CONTENT) String cookie){
 
-        if (!isValidSession(session)){
-            return notValidSession();
+        if(!isAuthorized(cookie)) {
+            return AUTHENTICATION_ERROR;
         }
 
-        List<Track> tracks = trackService.getAllTracks(session);
 
+        List<Track> tracks = trackService.getAllTracks(userId);
         return ResponseEntity.ok().body(tracks);
 
     }
 
-    @RequestMapping(value = "tracks", method = RequestMethod.POST)
-    public HttpEntity<String> addTrack(@RequestParam Track track){
+    @RequestMapping(value = "", method = RequestMethod.POST)
+    public HttpEntity<?> addTrack(@CookieValue(value = "sessionId", defaultValue = NO_CONTENT) String cookie,
+                                       @RequestParam Track track){
 
-        if (!isValidSession(session)){
-            return notValidSession();
+        if(!isAuthorized(cookie)) {
+            return AUTHENTICATION_ERROR;
         }
 
-        Long trackId = trackService.addTrack(track, session);
+        trackService.addTrack(track);
 
-        URI uri = URI.create(""); //todo;
-        return ResponseEntity.created(uri).body(null);
+
+        return ResponseEntity.status(HttpStatus.CREATED).body(null);
 
     }
 
-    @RequestMapping(value = "tracks/{trackId}", method = RequestMethod.DELETE)
+    @RequestMapping(value = "/{trackId}", method = RequestMethod.DELETE)
     public HttpEntity<List<Track>> deleteTrack(@PathVariable Long trackId){
 
-        if (!isValidSession(session) || isForeignTrack(trackId, session)){
-            return notValidSession();
-        }
 
-        List<Track> tracks = trackService.deleteTrack(trackId);
-        return ResponseEntity.ok().body(tracks);
+        return ResponseEntity.ok().body(null);
     }
 
-    @RequestMapping(value = "tracks/{trackId}", method = RequestMethod.PUT)
+    @RequestMapping(value = "/{trackId}", method = RequestMethod.PUT)
     public HttpEntity<Track> updateTrack(@PathVariable Long trackId){
 
-        if (!isValidSession(session) || isForeignTrack(trackId, session)){
-            return notValidSession();
+        return ResponseEntity.status(HttpStatus.CREATED).body(null);
+
+    }
+
+
+    private void pullUser(String cookie) {
+        User user = userService.findUser(cookie);
+        if (user != null){
+            userId = user.getId();
+            token = userService.getTokenFor(userId);
         }
-
-        Track track = trackService.updateTrack(trackId);
-
-        URI uri = URI.create("");
-
-        return ResponseEntity.created(uri).body(track);
-
     }
-
-
-
-
-    private boolean isForeignTrack(Long trackId, String session) {
-
-        return true;
-    }
-
-    private boolean isValidSession(HttpSession session, Token token){
-        return false;
-    }
-
-    private boolean isValidSession(String session){
-        return false;
-    } //todo: remove it;
 
     private <T> ResponseEntity<T> notValidSession(){
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
+    }
+
+    private boolean isAuthorized(String cookie) {
+
+        if(cookie.equals(NO_CONTENT)){
+            return false;
+        }
+        if (!isTokenValid(cookie)){
+            pullUser(cookie);
+        }
+
+        return isTokenValid(cookie);
+    }
+
+    private boolean isTokenValid(String cookie){
+        boolean authorized = false;
+        if (userId != null && token != null){
+            if (cookie.equals(token.getToken())){
+                if (token.getExpiredTime() < System.currentTimeMillis() % 1000){
+                    authorized = true;
+                }
+            }
+        }
+        return authorized;
     }
 }

@@ -73,9 +73,41 @@ public class ApiMessage {
 
     }
 
+    public static String alreadyLoggedIn() {
 
+        String description = "You are already logged in. Check main page";
 
+        String location = "/tracks";
 
+        createBody(description, location);
+
+        return stringify(propertyValueMap);
+    }
+
+    public static String hasActiveSession(boolean activeSession) {
+
+        String state = (activeSession) ? "active" : "disactive";
+        String description = "your session is " + state;
+
+        String location = (activeSession) ? "/login" : "/tracks";
+
+        createBody(description, location);
+
+        propertyValueMap.put("state", String.valueOf(activeSession)); //true or false;
+
+        return stringify(propertyValueMap);
+    }
+
+    public static String noLoggedUser() {
+
+        String description = "You are not logged in. Please log in first";
+
+        String location = "/login";
+
+        createBody(description, location);
+
+        return stringify(propertyValueMap);
+    }
 
     //PRIVATE SUPPORT METHODS
 

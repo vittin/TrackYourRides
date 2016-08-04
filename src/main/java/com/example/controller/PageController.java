@@ -14,13 +14,11 @@ public class PageController {
 
     @RequestMapping("")
     public String homePage() {
-        System.out.println("HI");
         return "index.html";
     }
 
     @RequestMapping("login")
     public String login(){
-        System.out.println("HERE");
         return "loginPage.html";
     }
 

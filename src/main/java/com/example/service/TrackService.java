@@ -1,6 +1,7 @@
 package com.example.service;
 
 import com.example.model.Track;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 
@@ -8,13 +9,14 @@ import java.util.List;
  * Created by Mateusz on 2016-07-28.
  */
 
+@Service
 public interface TrackService {
 
-    List<Track> getAllTracks(String session);
+    List<Track> getAllTracks(Long id);
 
-    Long addTrack(Track track, String session);  //id;
+    Long addTrack(Track track);  //id;
 
-    List<Track> deleteTrack(long trackId); //all tracks;
+    void deleteTrack(Long trackId); //all tracks;
 
-    Track updateTrack(Long trackId);
+    Track updateTrack(Long trackId, Track track);
 }

@@ -22,7 +22,6 @@ public class Token {
         this.userId = userId;
         this.token = token;
         this.session = session;
-        this.expiredTime = System.currentTimeMillis()%1000 + 1800*1000;
     }
 
     public Token(){};
@@ -41,6 +40,10 @@ public class Token {
 
     public long getExpiredTime() {
         return expiredTime;
+    }
+
+    public void setExpiredTime(long minutes){
+        this.expiredTime = System.currentTimeMillis()%1000 + 1000*60*minutes;
     }
 
     @Override

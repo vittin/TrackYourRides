@@ -4,7 +4,7 @@
 
 $("#open-app").click(function(){
     $.ajax({
-        url: "/api/getTracks",
+        url: "/api/tracks",
         method: "GET"
     })
         .done(function(response){

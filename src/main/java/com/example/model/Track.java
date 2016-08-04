@@ -26,17 +26,40 @@ public class Track {
     private int temperature;
 
 
-    public Track(double distance, int durationInSeconds, int averageSpeed, Weather weather, int temperature) {
+    public Track(double distance, int durationInSeconds, int averageSpeed, int temperature) {
         this.distance = distance;
         this.durationInSeconds = durationInSeconds;
         this.averageSpeed = averageSpeed;
-        this.weather = weather;
         this.temperature = temperature;
     }
 
-    public Track(){}
+    Track(){}
 
     public long getTrackId() {
         return trackId;
+    }
+
+    public int getDurationInSeconds() {
+        return durationInSeconds;
+    }
+
+    public int getAverageSpeed() {
+        return averageSpeed;
+    }
+
+    public int getTemperature() {
+        return temperature;
+    }
+
+    @Override
+    public String toString() {
+        return "Track{" +
+                "trackId=" + trackId +
+                ", distance=" + distance +
+                ", durationInSeconds=" + durationInSeconds +
+                ", averageSpeed=" + averageSpeed +
+                ", weather=" + weather +
+                ", temperature=" + temperature +
+                '}';
     }
 }

@@ -1,5 +1,6 @@
 package com.example.service;
 
+import com.example.model.TokenRepository;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -7,6 +8,7 @@ import static junit.framework.TestCase.assertFalse;
 import static junit.framework.TestCase.assertTrue;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
+import static org.mockito.Mockito.mock;
 
 /**
  * Created by Mateusz on 2016-08-02.
@@ -15,10 +17,14 @@ import static org.hamcrest.Matchers.*;
 public class AuthServiceImplTest {
 
     private AuthService authService;
+    private TokenRepository tokenRepository;
 
     @Before
     public void setUp(){
-        authService = new AuthServiceImpl();
+
+        tokenRepository = mock(TokenRepository.class);
+
+        authService = new AuthServiceImpl(tokenRepository);
     }
 
     @Test

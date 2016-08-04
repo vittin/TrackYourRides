@@ -6,7 +6,10 @@
 	<groupId>com.example</groupId>
 	<artifactId>trackyourrides</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<packaging>jar</packaging>
+    <modules>
+        <module>TrackYourRidesClient</module>
+    </modules>
+    <packaging>pom</packaging>
 
 	<name>TrackYourRides</name>
 	<description>Track your rides, check statistics and much more.</description>

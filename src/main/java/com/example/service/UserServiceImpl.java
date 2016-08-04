@@ -1,28 +1,26 @@
 package com.example.service;
 
 import com.example.model.Token;
-import com.example.model.TokenRepository;
 import com.example.model.User;
 import com.example.model.UserRepository;
 import com.sun.istack.internal.Nullable;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
 /**
  * Created by Mateusz on 2016-07-28.
  */
 
-@Component
+@Service
 public class UserServiceImpl implements UserService {
 
+    private static final long DEFAULT_COOKIE_EXPIRATION_TIME = 30;
     private final UserRepository repo;
     private final AuthService authService;
-    private final TokenRepository tokenRepo;
 
     @Autowired
-    UserServiceImpl(UserRepository repo, TokenRepository tokenRepo, AuthService authService){
+    public UserServiceImpl(UserRepository repo, AuthService authService){
         this.repo = repo;
-        this.tokenRepo = tokenRepo;
         this.authService = authService;
     }
 
@@ -36,6 +34,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @Nullable
     public User findUser(User givenUser){
 
 
@@ -52,10 +51,30 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public String createTokenFor(Long id, String sessionId) {
+    @Nullable
+    public User findUser(Long id){
+        return repo.getOne(id);
+    }
+
+    @Override
+    @Nullable
+    public User findUser(String token){
+
+        Long id = authService.getUserByToken(token);
+        return repo.getOne(id);
+    }
+
+    @Override
+    public Token createTokenFor(Long id, String sessionId) {
         Token token = authService.createToken(id, sessionId);
-        tokenRepo.save(token);
-        return token.toString();
+        authService.saveToken(token, DEFAULT_COOKIE_EXPIRATION_TIME);
+        return token;
+    }
+
+    @Override
+    @Nullable
+    public Token getTokenFor(Long id){
+        return authService.getTokenFor(id);
     }
 
     @Override
@@ -94,5 +113,10 @@ public class UserServiceImpl implements UserService {
 
         String emailPattern = "(^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\\.[a-zA-Z0-9-.]+$)";
         return email.matches(emailPattern);
+    }
+
+    @Override
+    public boolean hasActiveSession(String token){
+        return authService.getUserByToken(token) != null;
     }
 }

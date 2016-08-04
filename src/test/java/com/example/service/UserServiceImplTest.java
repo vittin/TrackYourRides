@@ -34,10 +34,9 @@ public class UserServiceImplTest {
     public void setUp(){
 
         this.userRepo = mock(UserRepository.class);
-        this.tokenRepo = mock(TokenRepository.class);
         this.authService = mock(AuthService.class);
 
-        this.userService = new UserServiceImpl(userRepo, tokenRepo, authService);
+        this.userService = new UserServiceImpl(userRepo, authService);
 
         this.fakeUser = new User("john", "hashedPassword", "email@email.com");
     }
@@ -106,9 +105,9 @@ public class UserServiceImplTest {
         Token token = new Token(1L, "3124h", "token-223");
         when(authService.createToken(1L, "3124h")).thenReturn(token);
 
-        String createdToken = userService.createTokenFor(1L, "3124h");
+        Token createdToken = userService.createTokenFor(1L, "3124h");
 
-        assertThat(createdToken, is(token.toString()));
+        assertThat(createdToken, is(token));
         verify(tokenRepo).save(token);
 
     }
