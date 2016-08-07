@@ -3,6 +3,7 @@ package com.example.service;
 import com.example.model.Token;
 import com.example.model.User;
 import com.example.model.UserRepository;
+import com.sun.istack.internal.NotNull;
 import com.sun.istack.internal.Nullable;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -25,7 +26,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public boolean userIsUnique(User user)
+    public boolean userIsUnique(@NotNull User user)
     {
 
         User userFromRepo = findUser(user);
@@ -35,7 +36,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Nullable
-    public User findUser(User givenUser){
+    public User findUser(@NotNull User givenUser){
 
 
         System.out.println(givenUser);
@@ -52,15 +53,12 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Nullable
-    public User findUser(Long id){
-        return repo.getOne(id);
-    }
-
-    @Override
-    @Nullable
-    public User findUser(String token){
+    public User findUser(@NotNull String token){
 
         Long id = authService.getUserByToken(token);
+        if (id == null){
+            return null;
+        }
         return repo.getOne(id);
     }
 
@@ -73,19 +71,19 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Nullable
-    public Token getTokenFor(Long id){
-        return authService.getTokenFor(id);
+    public Token getToken(@NotNull String token){
+        return authService.getToken(token);
     }
 
     @Override
-    public User createUser(User user) {
+    public User createUser(@NotNull User user) {
         String plainTextPassword = user.getPassword();
         user.setPassword(authService.encrypt(plainTextPassword));
         return repo.save(user);
     }
 
     @Override
-    public boolean canUserLogIn(User user){
+    public boolean canLogin(@NotNull User user){
 
         String password = user.getPassword();
 
@@ -116,7 +114,15 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public boolean hasActiveSession(String token){
-        return authService.getUserByToken(token) != null;
+    public boolean hasActiveSession(String tokenId){
+        return authService.isTokenValid(tokenId);
     }
+
+    @Override
+    public void logout(String token){
+
+        authService.deleteToken(token);
+    }
+
+
 }

@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Your rides</title>
+
+    <link type="text/css" rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css"
+          integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
+    <link type="text/css" rel="stylesheet" href="css/tracks.css">
+    <link type="text/css" rel="stylesheet" href="//cdn.datatables.net/1.10.12/css/jquery.dataTables.min.css">
+</head>
+<body>
+<div class="container">
+
+    <h1>Your tracks:</h1>
+    <div class="container">
+        <table id="tracksTable" class="table table-hover">
+            <thead>
+            <tr>
+                <th class="date header">Date</th>
+                <th class="dist header">Distance</th>
+                <th class="time header">Time</th>
+                <th class="avg-speed header">Average Speed</th>
+                <th class="max-speed header">Max Speed</th>
+                <th class="temp header">Temperature</th>
+            </tr>
+            </thead>
+            <tbody id="tracksTableBody">
+            <tr>
+                <td class="id">1</td>
+                <td class="dist">58</td>
+                <td class="time">2:12:56</td>
+                <td class="avg-speed">25</td>
+                <td class="max-speed">44</td>
+                <td class="temp">23</td>
+            </tr>
+            <tr>
+                <td class="id">2</td>
+                <td class="dist">32</td>
+                <td class="time">2:09:56</td>
+                <td class="avg-speed">17</td>
+                <td class="max-speed">32</td>
+                <td class="temp">37</td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+    <div id="buttonDiv">
+
+    </div>
+
+</div>
+
+<div class="loading-screen">
+    <div class="loading-div">
+
+        <div class='uil-magnify-css' style='transform:scale(0.5);'><div class="group"><div class="grip"></div><div class="inner-circle"></div><div class="outer-circle"></div></div></div>
+
+        <h2>Loading your tracks...</h2>
+    </div>
+</div>
+
+<script src="//ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
+<script src="//cdn.datatables.net/1.10.12/js/jquery.dataTables.min.js"></script>
+<script src="js/tracks.js"></script>
+</body>
+</html>

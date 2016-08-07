@@ -2,6 +2,7 @@ package com.example.service;
 
 import com.example.model.Track;
 import com.example.model.TrackRepository;
+import com.example.model.User;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.BeanWrapper;
 import org.springframework.beans.BeanWrapperImpl;
@@ -21,6 +22,7 @@ public class TrackServiceImpl implements TrackService {
 
     private final AuthService authService;
     private final TrackRepository trackRepo;
+    private User user;
 
     @Autowired
     TrackServiceImpl(AuthService authService, TrackRepository trackRepo){
@@ -29,12 +31,18 @@ public class TrackServiceImpl implements TrackService {
     }
 
     @Override
-    public List<Track> getAllTracks(Long id) {
-        return null;
+    public void setUser(User user) {
+        this.user = user;
+    }
+
+    @Override
+    public List<Track> getAllTracks() {
+        return user.getTracks();
     }
 
     @Override
     public Long addTrack(Track track) {
+        track.setUser(user);
         Track saved = trackRepo.save(track);
         return saved.getTrackId();
     }

@@ -1,5 +1,6 @@
 package com.example.service;
 
+import com.example.model.Token;
 import com.example.model.TokenRepository;
 import org.junit.Before;
 import org.junit.Test;
@@ -7,7 +8,8 @@ import org.junit.Test;
 import static junit.framework.TestCase.assertFalse;
 import static junit.framework.TestCase.assertTrue;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.*;
+import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.not;
 import static org.mockito.Mockito.mock;
 
 /**
@@ -62,4 +64,19 @@ public class AuthServiceImplTest {
         assertFalse(authService.validatePassword(plainText, password3));
         assertFalse(authService.validatePassword(password1, plainText));
     }
+
+    @Test
+    public void tokensShouldBeUnique(){
+
+        Token token1 = authService.createToken(1L, "abc");
+        Token token2 = authService.createToken(1L, "def");
+        Token token3 = authService.createToken(2L, "abc");
+
+        assertThat(token1, is(not(token2)));
+        assertThat(token1, is(not(token3)));
+
+        assertThat(token1.getUserId(), is(token2.getUserId()));
+        assertThat(token1.getSession(), is(token3.getSession()));
+    }
+
 }

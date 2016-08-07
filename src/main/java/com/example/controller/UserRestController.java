@@ -3,6 +3,7 @@ package com.example.controller;
 import com.example.model.Token;
 import com.example.model.User;
 import com.example.service.UserService;
+import com.sun.istack.internal.Nullable;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.http.HttpEntity;
@@ -14,6 +15,8 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import static com.sun.org.apache.xml.internal.utils.LocaleUtility.EMPTY_STRING;
+
 /**
  * Created by Mateusz on 2016-08-01.
  */
@@ -23,6 +26,7 @@ import javax.servlet.http.HttpSession;
 @Scope("session")
 public class UserRestController {
 
+    private static final String DOMAIN = "127.0.0.1";
     private final UserService userService;
 
     @Autowired
@@ -67,20 +71,15 @@ public class UserRestController {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(ApiMessage.loginFailed());
         }
 
-        if (!userService.canUserLogIn(presentUser)) {
+        if (!userService.canLogin(presentUser)) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(ApiMessage.loginFailed());
         } else {
 
             Token token = userService.createTokenFor(user.getId(), session.getId());
-            //todo: userService.setCurrentUser(user);
-            String tokenId = token.getToken();
-            String path = "/";
+            String tokenId = token.getTokenId();
 
-            Cookie responseCookie = new Cookie("sessionToken", tokenId);
-            responseCookie.setDomain(path);
-            responseCookie.setMaxAge(30*60*1000);
-
-            response.addCookie(responseCookie);
+            Cookie cookie = prepareCookie(tokenId);
+            response.addCookie(cookie);
 
             return ResponseEntity.ok().body(ApiMessage.loginSuccessful());
 
@@ -88,17 +87,28 @@ public class UserRestController {
 
     }
 
-    @RequestMapping("/logout")
-    public String logout(){
+    @RequestMapping(value = "/logout", method = RequestMethod.GET)
+    public HttpEntity logout(@CookieValue(value = "sessionToken", defaultValue = "") String token,
+                             HttpServletResponse response){
+        Cookie cookie = prepareCookie(null);
+        cookie.setMaxAge(0);
+        response.addCookie(cookie);
 
-        //TODO:
-        return null;
+        userService.logout(token);
+
+        return ResponseEntity.ok().body(ApiMessage.loggedOut());
     }
 
-    @RequestMapping("/logged")
-    public String isLogged(@CookieValue(value = "sessionId", defaultValue = "") String token){
+    @RequestMapping(value = "/logged", method = RequestMethod.GET)
+    public HttpEntity isLogged(@CookieValue(value = "sessionToken", defaultValue = "") String token,
+                           HttpServletResponse response){
         boolean activeSession = userService.hasActiveSession(token);
-        return ApiMessage.hasActiveSession(activeSession);
+
+        if(!activeSession && !EMPTY_STRING.equals(token)){
+            logout(token, response);
+        }
+
+        return ResponseEntity.ok().body(ApiMessage.hasActiveSession(activeSession));
     }
 
     private User checkIfIsUsernameOrPassword(User presentUser) {
@@ -107,6 +117,14 @@ public class UserRestController {
             presentUser = new User("", presentUser.getPassword(), presentUser.getEmail());
         }
         return presentUser;
+    }
+
+    private Cookie prepareCookie(@Nullable String tokenId){
+        Cookie responseCookie = new Cookie("sessionToken", tokenId);
+        responseCookie.setDomain(DOMAIN);
+        responseCookie.setPath("/");
+        responseCookie.setMaxAge(30*60);
+        return responseCookie;
     }
 
 

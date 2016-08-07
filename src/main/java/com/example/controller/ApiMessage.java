@@ -73,7 +73,7 @@ public class ApiMessage {
 
     }
 
-    public static String alreadyLoggedIn() {
+    static String alreadyLoggedIn() {
 
         String description = "You are already logged in. Check main page";
 
@@ -84,23 +84,36 @@ public class ApiMessage {
         return stringify(propertyValueMap);
     }
 
-    public static String hasActiveSession(boolean activeSession) {
+    static String hasActiveSession(boolean activeSession) {
 
         String state = (activeSession) ? "active" : "disactive";
         String description = "your session is " + state;
 
-        String location = (activeSession) ? "/login" : "/tracks";
+        String location = (activeSession) ? "/tracks" : "/login";
 
         createBody(description, location);
 
         propertyValueMap.put("state", String.valueOf(activeSession)); //true or false;
 
+        System.out.println(stringify(propertyValueMap));
+
         return stringify(propertyValueMap);
     }
 
-    public static String noLoggedUser() {
+    static String noLoggedUser() {
 
         String description = "You are not logged in. Please log in first";
+
+        String location = "/login";
+
+        createBody(description, location);
+
+        return stringify(propertyValueMap);
+    }
+
+    static String loggedOut() {
+
+        String description = "You are successfull logged out.";
 
         String location = "/login";
 

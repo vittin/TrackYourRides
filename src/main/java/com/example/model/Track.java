@@ -1,9 +1,8 @@
 package com.example.model;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
+import javax.persistence.*;
 import javax.validation.constraints.NotNull;
+import java.util.Date;
 
 /**
  * Created by Mateusz on 2016-07-28.
@@ -22,8 +21,15 @@ public class Track {
     @NotNull
     private int averageSpeed;
 
+    private Date date;
+
     private Weather weather;
+
     private int temperature;
+
+    @ManyToOne()
+    @JoinColumn(name = "userId")
+    private User user;
 
 
     public Track(double distance, int durationInSeconds, int averageSpeed, int temperature) {
@@ -31,6 +37,12 @@ public class Track {
         this.durationInSeconds = durationInSeconds;
         this.averageSpeed = averageSpeed;
         this.temperature = temperature;
+        this.date = new Date();
+    }
+
+    public Track(double distance, int durationInSeconds, int averageSpeed, int temperature, Date date){
+        this(distance, durationInSeconds, averageSpeed, temperature);
+        this.date = date;
     }
 
     Track(){}
@@ -49,6 +61,10 @@ public class Track {
 
     public int getTemperature() {
         return temperature;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
     }
 
     @Override

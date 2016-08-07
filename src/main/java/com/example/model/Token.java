@@ -14,13 +14,13 @@ public class Token {
     @GeneratedValue
     private long id;
     private long userId;
-    private String token;
+    private String tokenId;
     private String session;
     private long expiredTime;
 
     public Token(long userId, String session, String token){
         this.userId = userId;
-        this.token = token;
+        this.tokenId = token;
         this.session = session;
     }
 
@@ -30,8 +30,8 @@ public class Token {
         return userId;
     }
 
-    public String getToken() {
-        return token;
+    public String getTokenId() {
+        return tokenId;
     }
 
     public String getSession() {
@@ -43,13 +43,13 @@ public class Token {
     }
 
     public void setExpiredTime(long minutes){
-        this.expiredTime = System.currentTimeMillis()%1000 + 1000*60*minutes;
+        this.expiredTime = System.currentTimeMillis() + 1000*60*minutes;
     }
 
     @Override
     public String toString() {
         return "Token{" +
-                "token='" + token + '\'' +
+                "tokenId='" + tokenId + '\'' +
                 '}';
     }
 

@@ -1,6 +1,7 @@
 package com.example.service;
 
 import com.example.model.Track;
+import com.example.model.User;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -12,7 +13,9 @@ import java.util.List;
 @Service
 public interface TrackService {
 
-    List<Track> getAllTracks(Long id);
+    void setUser(User user);
+
+    List<Track> getAllTracks();
 
     Long addTrack(Track track);  //id;
 

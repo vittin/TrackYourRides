@@ -24,10 +24,6 @@ public class AuthServiceImpl implements AuthService{
         this.tokenRepo = tokenRepo;
     }
 
-
-
-
-
     private PasswordEncoder encoder = new BCryptPasswordEncoder();
 
     @Override
@@ -50,8 +46,8 @@ public class AuthServiceImpl implements AuthService{
 
     @Override
     @Nullable
-    public Token getTokenFor(Long id){
-        return tokenRepo.findByUserId(id);
+    public Token getToken(String cookie){
+        return tokenRepo.findByTokenId(cookie);
     }
 
     @Override
@@ -61,9 +57,24 @@ public class AuthServiceImpl implements AuthService{
     }
 
     @Override
+    public boolean isTokenValid(String tokenId){
+
+        boolean authorized = false;
+        Token token = getToken(tokenId);
+        if (token != null){
+            if (token.getExpiredTime() > System.currentTimeMillis()){
+                authorized = true;
+            } else {
+                deleteToken(tokenId);
+            }
+        }
+        return authorized;
+    }
+
+    @Override
     @Nullable
     public Long getUserByToken(String cookie) {
-        Token token = tokenRepo.findByToken(cookie);
+        Token token = tokenRepo.findByTokenId(cookie);
         Long userId = null;
 
         if (token != null){
@@ -71,6 +82,11 @@ public class AuthServiceImpl implements AuthService{
         }
 
         return userId;
+    }
+
+    @Override
+    public void deleteToken(String token){
+        tokenRepo.delete(getToken(token));
     }
 
 }

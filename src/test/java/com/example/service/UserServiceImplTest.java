@@ -132,8 +132,8 @@ public class UserServiceImplTest {
         when(authService.validatePassword("password", "hashedPassword")).thenReturn(true);
         when(authService.validatePassword("anotherPassword", "anotherHash")).thenReturn(false);
 
-        assertTrue(userService.canUserLogIn(john));
-        assertFalse(userService.canUserLogIn(marry));
+        assertTrue(userService.canLogin(john));
+        assertFalse(userService.canLogin(marry));
     }
 
     @Test

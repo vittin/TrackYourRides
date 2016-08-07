@@ -27,4 +27,9 @@ public class PageController {
         return "registerPage.html";
     }
 
+    @RequestMapping("tracks")
+    public String tracks() {
+        return "tracksPage.html";
+    }
+
 }

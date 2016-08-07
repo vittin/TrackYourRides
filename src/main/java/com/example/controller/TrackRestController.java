@@ -12,6 +12,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.net.URI;
 import java.util.List;
 
 /**
@@ -27,10 +28,6 @@ public class TrackRestController {
     private final TrackService trackService;
     private final UserService userService;
 
-    private final static ResponseEntity AUTHENTICATION_ERROR =
-            ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(ApiMessage.noLoggedUser());
-
-    private Long userId;
     private Token token;
 
 
@@ -42,61 +39,69 @@ public class TrackRestController {
 
 
     @RequestMapping(value = "", method = RequestMethod.GET)
-    public HttpEntity<?> getTracks(@CookieValue(value = "sessionId", defaultValue = NO_CONTENT) String cookie){
+    public HttpEntity<?> getTracks(@CookieValue(value = "sessionToken", defaultValue = NO_CONTENT) String cookie){
 
         if(!isAuthorized(cookie)) {
-            return AUTHENTICATION_ERROR;
+            return notValidSession();
         }
 
-
-        List<Track> tracks = trackService.getAllTracks(userId);
+        List<Track> tracks = trackService.getAllTracks();
         return ResponseEntity.ok().body(tracks);
 
     }
 
     @RequestMapping(value = "", method = RequestMethod.POST)
-    public HttpEntity<?> addTrack(@CookieValue(value = "sessionId", defaultValue = NO_CONTENT) String cookie,
+    public HttpEntity<?> addTrack(@CookieValue(value = "sessionToken", defaultValue = NO_CONTENT) String cookie,
                                        @RequestParam Track track){
 
         if(!isAuthorized(cookie)) {
-            return AUTHENTICATION_ERROR;
+            return notValidSession();
         }
 
-        trackService.addTrack(track);
-
-
-        return ResponseEntity.status(HttpStatus.CREATED).body(null);
-
+        long id = trackService.addTrack(track);
+        return ResponseEntity.created(URI.create("/"+id)).body(null);
     }
 
     @RequestMapping(value = "/{trackId}", method = RequestMethod.DELETE)
-    public HttpEntity<List<Track>> deleteTrack(@PathVariable Long trackId){
+    public HttpEntity<?> deleteTrack(@CookieValue(value = "sessionToken", defaultValue = NO_CONTENT) String cookie,
+                                     @PathVariable Long trackId){
 
+        if(!isAuthorized(cookie)) {
+            return notValidSession();
+        }
 
-        return ResponseEntity.ok().body(null);
+        trackService.deleteTrack(trackId);
+
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
     }
 
     @RequestMapping(value = "/{trackId}", method = RequestMethod.PUT)
-    public HttpEntity<Track> updateTrack(@PathVariable Long trackId){
+    public HttpEntity<?> updateTrack(@CookieValue(value = "sessionToken", defaultValue = NO_CONTENT) String cookie,
+                                         @PathVariable Long trackId, @PathVariable Track track){
 
-        return ResponseEntity.status(HttpStatus.CREATED).body(null);
+        if(!isAuthorized(cookie)) {
+            return notValidSession();
+        }
 
+        trackService.updateTrack(trackId, track);
+
+        return ResponseEntity.accepted().body(null);
     }
+
+
 
 
     private void pullUser(String cookie) {
         User user = userService.findUser(cookie);
         if (user != null){
-            userId = user.getId();
-            token = userService.getTokenFor(userId);
+            token = userService.getToken(cookie);
+            trackService.setUser(user);
         }
     }
 
-    private <T> ResponseEntity<T> notValidSession(){
-        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
-    }
 
     private boolean isAuthorized(String cookie) {
+
 
         if(cookie.equals(NO_CONTENT)){
             return false;
@@ -109,14 +114,20 @@ public class TrackRestController {
     }
 
     private boolean isTokenValid(String cookie){
+
         boolean authorized = false;
-        if (userId != null && token != null){
-            if (cookie.equals(token.getToken())){
-                if (token.getExpiredTime() < System.currentTimeMillis() % 1000){
+        if (token != null){
+            if (cookie.equals(token.getTokenId())){
+
+                if (token.getExpiredTime() > System.currentTimeMillis()){
                     authorized = true;
                 }
             }
         }
         return authorized;
+    }
+
+    private static ResponseEntity<String> notValidSession(){
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(ApiMessage.noLoggedUser());
     }
 }
