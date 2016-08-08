@@ -1,7 +1,7 @@
 package com.example.service;
 
 import com.example.model.Token;
-import com.example.model.TokenRepository;
+import com.example.repository.TokenRepository;
 import org.junit.Before;
 import org.junit.Test;
 

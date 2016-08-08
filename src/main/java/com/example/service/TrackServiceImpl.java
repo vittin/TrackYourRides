@@ -1,8 +1,9 @@
 package com.example.service;
 
 import com.example.model.Track;
-import com.example.model.TrackRepository;
 import com.example.model.User;
+import com.example.repository.TrackRepository;
+import com.example.repository.UserRepository;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.BeanWrapper;
 import org.springframework.beans.BeanWrapperImpl;
@@ -10,7 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.HashSet;
-import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -20,13 +21,13 @@ import java.util.Set;
 @Service
 public class TrackServiceImpl implements TrackService {
 
-    private final AuthService authService;
     private final TrackRepository trackRepo;
+    private final UserRepository userRepo;
     private User user;
 
     @Autowired
-    TrackServiceImpl(AuthService authService, TrackRepository trackRepo){
-        this.authService = authService;
+    TrackServiceImpl(UserRepository userRepo, TrackRepository trackRepo){
+        this.userRepo = userRepo;
         this.trackRepo = trackRepo;
     }
 
@@ -36,27 +37,38 @@ public class TrackServiceImpl implements TrackService {
     }
 
     @Override
-    public List<Track> getAllTracks() {
+    public Map<Long, Track> getAllTracks() {
         return user.getTracks();
     }
 
     @Override
     public Long addTrack(Track track) {
-        track.setUser(user);
-        Track saved = trackRepo.save(track);
-        return saved.getTrackId();
+
+        user.addTrack(track);
+        userRepo.save(user);
+
+        return trackRepo.save(track).getTrackId();
     }
 
     @Override
     public void deleteTrack(Long trackId) {
+
+        Track track = trackRepo.findOne(trackId);
+
+        user.removeTrack(track);
+        userRepo.save(user);
         trackRepo.delete(trackId);
     }
 
     @Override
     public Track updateTrack(Long trackId, Track givenTrack) {
 
-        trackRepo.getOne(trackId);
-        copyNonNullProperties(givenTrack, trackId);
+        Track track = trackRepo.getOne(trackId);
+        copyNonNullProperties(givenTrack, track);
+
+        user.addTrack(track);
+        userRepo.save(user);
+        trackRepo.save(track);
 
         return trackRepo.save(givenTrack);
 

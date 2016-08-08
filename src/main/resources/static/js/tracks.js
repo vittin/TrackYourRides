@@ -25,11 +25,14 @@ var Ajax = {
         })
             .done(function (responseJSON) {
                 console.log(responseJSON);
-                //var tracks = JSON.parse(responseJSON);
-                var tracks = responseJSON;
-                tracks.forEach(function(track){
-                    TrackDOM.prependTrack(track);
-                });
+                if (!responseJSON){
+                    return;
+                }
+                for (var trackId in responseJSON) {
+                    if (responseJSON.hasOwnProperty(trackId)) {
+                        TrackDOM.prependTrack(responseJSON[trackId]);
+                    }
+                }
 
                 TrackDOM.enableSorting();
                 //$("#tracksTable_info").text("");

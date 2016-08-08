@@ -2,7 +2,8 @@ package com.example.model;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Created by Mateusz on 2016-07-28.
@@ -22,8 +23,8 @@ public class User {
     @Column(unique = true)
     private String email;
 
-    @OneToMany(mappedBy = "user")
-    private List<Track> tracks;
+    @OneToMany(targetEntity = Track.class, cascade=CascadeType.ALL)
+    private Map<Long, Track> tracks;
 
     User(){}
 
@@ -35,6 +36,7 @@ public class User {
     protected User(String username, String password){
         this.username = username;
         this.password = password;
+        tracks = new HashMap<>();
     }
 
     public long getId() {
@@ -61,14 +63,19 @@ public class User {
         this.email = email;
     }
 
-    public List<Track> getTracks() {
+    public Map<Long, Track> getTracks() {
         return tracks;
     }
 
-    public void setTracks(List<Track> tracks) {
-        this.tracks = tracks;
+    public void addTrack(Track track){
+            tracks.put(track.getTrackId(), track);
     }
 
+    public void removeTrack(Track track){
+        if (tracks.containsKey(track.getTrackId())){
+            tracks.remove(track.getTrackId(), track);
+        }
+    }
     @Override
     public String toString() {
         return "User{" +

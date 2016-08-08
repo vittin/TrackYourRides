@@ -1,9 +1,9 @@
 package com.example.service;
 
 import com.example.model.Token;
-import com.example.model.TokenRepository;
+import com.example.repository.TokenRepository;
 import com.example.model.User;
-import com.example.model.UserRepository;
+import com.example.repository.UserRepository;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;

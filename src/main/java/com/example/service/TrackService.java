@@ -4,7 +4,7 @@ import com.example.model.Track;
 import com.example.model.User;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
+import java.util.Map;
 
 /**
  * Created by Mateusz on 2016-07-28.
@@ -15,7 +15,7 @@ public interface TrackService {
 
     void setUser(User user);
 
-    List<Track> getAllTracks();
+    Map<Long, Track> getAllTracks();
 
     Long addTrack(Track track);  //id;
 

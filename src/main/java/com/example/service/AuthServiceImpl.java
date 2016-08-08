@@ -1,7 +1,7 @@
 package com.example.service;
 
 import com.example.model.Token;
-import com.example.model.TokenRepository;
+import com.example.repository.TokenRepository;
 import com.sun.istack.internal.Nullable;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -87,7 +87,7 @@ public class AuthServiceImpl implements AuthService{
     @Override
     public void deleteToken(String tokenId){
         Token token = getToken(tokenId);
-        if (tokenRepo.findOne(token.getEntityId()) != null){
+        if (token != null){
             tokenRepo.delete(token);
         }
 

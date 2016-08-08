@@ -15,6 +15,7 @@ public class Track {
     @GeneratedValue
     private long trackId;
 
+    @Temporal(TemporalType.TIMESTAMP)
     private Date date;
     @NotNull
     private Integer distance; //meters
@@ -25,15 +26,11 @@ public class Track {
 
     private Integer maxSpeed; //meters per hour
 
-    private Weather weather;
-
     private Integer temperature; //celcious
 
-    @ManyToOne()
-    @JoinColumn(name = "userId")
-    private User user;
+    //private User user;
 
-
+    //only for tests, can be safety join with second after rewrite tests;
     public Track(Integer distance, Integer duration, Integer averageSpeed, Integer temperature) {
         this.distance = distance;
         this.duration = duration;
@@ -42,9 +39,10 @@ public class Track {
         this.date = new Date();
     }
 
-    public Track(Long date, Integer distance, Integer duration, Integer averageSpeed, Integer temperature){
+    public Track(Long date, Integer distance, Integer duration, Integer averageSpeed, Integer maxSpeed, Integer temperature){
         this(distance, duration, averageSpeed, temperature);
         this.date = new Date(date);
+        this.maxSpeed = maxSpeed;
     }
 
     public Track(){}
@@ -53,24 +51,56 @@ public class Track {
         return trackId;
     }
 
-    public int getDuration() {
+    public void setTrackId(long trackId) {
+        this.trackId = trackId;
+    }
+
+    public Date getDate() {
+        return date;
+    }
+
+    public void setDate(Date date) {
+        this.date = date;
+    }
+
+    public Integer getDistance() {
+        return distance;
+    }
+
+    public void setDistance(Integer distance) {
+        this.distance = distance;
+    }
+
+    public Integer getDuration() {
         return duration;
     }
 
-    public int getAverageSpeed() {
+    public void setDuration(Integer duration) {
+        this.duration = duration;
+    }
+
+    public Integer getAverageSpeed() {
         return averageSpeed;
     }
 
-    public int getTemperature() {
+    public void setAverageSpeed(Integer averageSpeed) {
+        this.averageSpeed = averageSpeed;
+    }
+
+    public Integer getMaxSpeed() {
+        return maxSpeed;
+    }
+
+    public void setMaxSpeed(Integer maxSpeed) {
+        this.maxSpeed = maxSpeed;
+    }
+
+    public Integer getTemperature() {
         return temperature;
     }
 
-    public void setUser(User user) {
-        this.user = user;
-    }
-
-    void setDistance(Integer distance) {
-        this.distance = distance;
+    public void setTemperature(Integer temperature) {
+        this.temperature = temperature;
     }
 
     @Override
@@ -80,7 +110,6 @@ public class Track {
                 ", distance=" + distance +
                 ", duration=" + duration +
                 ", averageSpeed=" + averageSpeed +
-                ", weather=" + weather +
                 ", temperature=" + temperature +
                 '}';
     }

@@ -13,7 +13,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
-import java.util.List;
+import java.util.Map;
 
 /**
  * Created by Mateusz on 2016-07-28.
@@ -45,7 +45,7 @@ public class TrackRestController {
             return notValidSession();
         }
 
-        List<Track> tracks = trackService.getAllTracks();
+        Map<Long, Track> tracks = trackService.getAllTracks();
         return ResponseEntity.ok().body(tracks);
 
     }

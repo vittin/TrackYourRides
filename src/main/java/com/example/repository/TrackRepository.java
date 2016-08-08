@@ -1,5 +1,6 @@
-package com.example.model;
+package com.example.repository;
 
+import com.example.model.Track;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 /**

@@ -2,7 +2,7 @@ package com.example.service;
 
 import com.example.model.Token;
 import com.example.model.User;
-import com.example.model.UserRepository;
+import com.example.repository.UserRepository;
 import com.sun.istack.internal.NotNull;
 import com.sun.istack.internal.Nullable;
 import org.springframework.beans.factory.annotation.Autowired;

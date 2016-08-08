@@ -1,7 +1,8 @@
 package com.example.service;
 
 import com.example.model.Track;
-import com.example.model.TrackRepository;
+import com.example.repository.TrackRepository;
+import com.example.repository.UserRepository;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -16,14 +17,14 @@ import static org.mockito.Mockito.*;
 public class TrackServiceImplTest {
 
     private TrackRepository trackRepo;
-    private AuthService authService;
+    private UserRepository userRepository;
     private TrackService service;
 
     @Before
     public void setUp(){
         this.trackRepo = mock(TrackRepository.class);
-        this.authService = mock(AuthService.class);
-        this.service = new TrackServiceImpl(authService, trackRepo);
+        this.userRepository = mock(UserRepository.class);
+        this.service = new TrackServiceImpl(userRepository, trackRepo);
     }
 
 
