@@ -85,8 +85,12 @@ public class AuthServiceImpl implements AuthService{
     }
 
     @Override
-    public void deleteToken(String token){
-        tokenRepo.delete(getToken(token));
+    public void deleteToken(String tokenId){
+        Token token = getToken(tokenId);
+        if (tokenRepo.findOne(token.getEntityId()) != null){
+            tokenRepo.delete(token);
+        }
+
     }
 
 }

@@ -14,45 +14,47 @@ public class Track {
     @Id
     @GeneratedValue
     private long trackId;
-    @NotNull
-    private double distance;
-    @NotNull
-    private int durationInSeconds;
-    @NotNull
-    private int averageSpeed;
 
     private Date date;
+    @NotNull
+    private Integer distance; //meters
+    @NotNull
+    private Integer duration; //seconds
+    @NotNull
+    private Integer averageSpeed; //meters per hour
+
+    private Integer maxSpeed; //meters per hour
 
     private Weather weather;
 
-    private int temperature;
+    private Integer temperature; //celcious
 
     @ManyToOne()
     @JoinColumn(name = "userId")
     private User user;
 
 
-    public Track(double distance, int durationInSeconds, int averageSpeed, int temperature) {
+    public Track(Integer distance, Integer duration, Integer averageSpeed, Integer temperature) {
         this.distance = distance;
-        this.durationInSeconds = durationInSeconds;
+        this.duration = duration;
         this.averageSpeed = averageSpeed;
         this.temperature = temperature;
         this.date = new Date();
     }
 
-    public Track(double distance, int durationInSeconds, int averageSpeed, int temperature, Date date){
-        this(distance, durationInSeconds, averageSpeed, temperature);
-        this.date = date;
+    public Track(Long date, Integer distance, Integer duration, Integer averageSpeed, Integer temperature){
+        this(distance, duration, averageSpeed, temperature);
+        this.date = new Date(date);
     }
 
-    Track(){}
+    public Track(){}
 
     public long getTrackId() {
         return trackId;
     }
 
-    public int getDurationInSeconds() {
-        return durationInSeconds;
+    public int getDuration() {
+        return duration;
     }
 
     public int getAverageSpeed() {
@@ -67,12 +69,16 @@ public class Track {
         this.user = user;
     }
 
+    void setDistance(Integer distance) {
+        this.distance = distance;
+    }
+
     @Override
     public String toString() {
         return "Track{" +
                 "trackId=" + trackId +
                 ", distance=" + distance +
-                ", durationInSeconds=" + durationInSeconds +
+                ", duration=" + duration +
                 ", averageSpeed=" + averageSpeed +
                 ", weather=" + weather +
                 ", temperature=" + temperature +

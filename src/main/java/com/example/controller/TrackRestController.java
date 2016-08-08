@@ -52,12 +52,12 @@ public class TrackRestController {
 
     @RequestMapping(value = "", method = RequestMethod.POST)
     public HttpEntity<?> addTrack(@CookieValue(value = "sessionToken", defaultValue = NO_CONTENT) String cookie,
-                                       @RequestParam Track track){
+                                       @RequestBody Track track){
 
         if(!isAuthorized(cookie)) {
             return notValidSession();
         }
-
+        System.out.println(track);
         long id = trackService.addTrack(track);
         return ResponseEntity.created(URI.create("/"+id)).body(null);
     }

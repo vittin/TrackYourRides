@@ -13,6 +13,10 @@
     margin-left: 20%;
 }
 
+.track-input {
+    width: 100px;
+}
+
 @-webkit-keyframes uil-magnify-move {
     0% {
         -ms-transform: translate(30px, 30px);

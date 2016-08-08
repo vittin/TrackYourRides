@@ -18,8 +18,9 @@
             <thead>
             <tr>
                 <th class="date header">Date</th>
-                <th class="dist header">Distance</th>
                 <th class="time header">Time</th>
+                <th class="distance header">Distance</th>
+                <th class="duration header">Duration</th>
                 <th class="avg-speed header">Average Speed</th>
                 <th class="max-speed header">Max Speed</th>
                 <th class="temp header">Temperature</th>
@@ -27,17 +28,19 @@
             </thead>
             <tbody id="tracksTableBody">
             <tr>
-                <td class="id">1</td>
-                <td class="dist">58</td>
-                <td class="time">2:12:56</td>
+                <td class="date">19 Juny 2016</td>
+                <td class="time">8:32</td>
+                <td class="distance">58</td>
+                <td class="duration">2:12:56</td>
                 <td class="avg-speed">25</td>
                 <td class="max-speed">44</td>
                 <td class="temp">23</td>
             </tr>
             <tr>
-                <td class="id">2</td>
-                <td class="dist">32</td>
-                <td class="time">2:09:56</td>
+                <td class="date">17 Juny 2016</td>
+                <td class="time">17:11</td>
+                <td class="distance">32</td>
+                <td class="duration">2:09:56</td>
                 <td class="avg-speed">17</td>
                 <td class="max-speed">32</td>
                 <td class="temp">37</td>
@@ -46,7 +49,7 @@
         </table>
     </div>
     <div id="buttonDiv">
-
+        <button class='btn' id='addButton' onclick='Button.newTrack()'>new Track</button>
     </div>
 
 </div>

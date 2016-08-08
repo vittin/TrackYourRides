@@ -46,6 +46,10 @@ public class Token {
         this.expiredTime = System.currentTimeMillis() + 1000*60*minutes;
     }
 
+    public long getEntityId(){
+        return this.id;
+    }
+
     @Override
     public String toString() {
         return "Token{" +
