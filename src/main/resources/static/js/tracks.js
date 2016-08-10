@@ -16,6 +16,12 @@ var Loading = {
     }
 };
 
+var Navigation = {
+    loginPage: function () {
+        window.location.replace("/login");
+    }
+};
+
 
 var Ajax = {
     getData: function(){
@@ -41,8 +47,7 @@ var Ajax = {
 
             .fail(function (response) {
                 if (response.status == 401){
-                    var responseBody = JSON.parse(response.responseText);
-                    console.log(responseBody.message);
+                    Navigation.loginPage();
                 }
             })
     },
@@ -57,13 +62,36 @@ var Ajax = {
                 'Content-Type': 'application/json'
             },
         })
-            .done(function(response){console.log(response)})
-            .fail(function(response){console.log(response)})
+            //done can also consume request.getResponseHeader("Location") as trackId,
+            //then getTrack url should be simply " url: trackId ";
+            .done(trackId =>  Ajax.getTrack(trackId, TrackDOM.prependTrack))
+            .fail(response => {
+                if(response.status == 401){
+                    Navigation.loginPage();
+                }
+
+            })
+    },
+
+    getTrack: function(trackId, callback){
+        console.log("trackId: " + trackId);
+        $.ajax({
+            url: "api/tracks/" + trackId,
+            method: "GET",
+        })
+            .done(track => callback(track))
+            .fail(response => {
+                if(response.status == 401){
+                    Navigation.loginPage();
+                }
+            })
     }
 };
 
 var TrackDOM = {
     prependTrack: function(track){
+        console.log("track: ");
+        console.log(track);
         var trackElement = Track.create(track);
         $("#tracksTableBody").prepend(trackElement);
     },
@@ -71,6 +99,7 @@ var TrackDOM = {
     newTrack: function(){
         var newInput = this.newInput;
         var editableTrack = {
+            trackId: "new",
             date: newInput("text", 8, DateService.getDate()),
             time: newInput("text", 5, DateService.getTime()),
             distance: newInput("number", 4),
@@ -90,6 +119,11 @@ var TrackDOM = {
         var template2 = `<input class="track-input" type=${type} maxlength="${maxLength}" />`;
 
         return (actualValue) ? template1 : template2;
+    },
+
+    deleteTrack: function (trackId) {
+        console.log(trackId);
+        $("#track-"+trackId).remove();
     },
 
     getValues: function(){
@@ -114,7 +148,7 @@ var TrackDOM = {
 
 var Track = {
     create: function(track){
-        var TRACK_TEMPLATE = `<tr>` +
+        var TRACK_TEMPLATE = `<tr id="track-${track.trackId}">` +
             `<td class="date">${track.date}</td>` +
             `<td class="time">${track.time}</td>` +
             `<td class="distance"> ${track.distance} </td>` +
@@ -126,6 +160,17 @@ var Track = {
         TRACK_TEMPLATE = TRACK_TEMPLATE.replace(/undefined/g, "");
 
         return $($.parseHTML(TRACK_TEMPLATE));
+    },
+
+    toJson: function(){
+        var valuesMap = TrackDOM.getValues();
+        valuesMap.date = (DateService.parseDate(valuesMap.date, valuesMap.time)).toString();
+        delete valuesMap.time;
+        if (valuesMap.trackId == "new"){
+            delete valuesMap.trackId;
+        }
+
+        return JSON.stringify(valuesMap);
     }
 };
 
@@ -145,14 +190,12 @@ var Button = {
 
     saveTrack: function() {
         this.trigger();
-        var valuesMap = TrackDOM.getValues();
-
-        valuesMap.date = (DateService.parseDate(valuesMap.date, valuesMap.time)).toString();
-        delete valuesMap.time;
-
-        var json = JSON.stringify(valuesMap);
+        var json = Track.toJson();
         console.log(json);
-        Ajax.saveTrack(json)
+
+        Ajax.saveTrack(json);
+
+        TrackDOM.deleteTrack("new");
     },
 
     newTrack: function() {

@@ -110,7 +110,37 @@ public class Track {
                 ", distance=" + distance +
                 ", duration=" + duration +
                 ", averageSpeed=" + averageSpeed +
+                ", maxSpeed=" + maxSpeed +
                 ", temperature=" + temperature +
                 '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Track track = (Track) o;
+
+        if (trackId != track.trackId) return false;
+        if (!date.equals(track.date)) return false;
+        if (!distance.equals(track.distance)) return false;
+        if (!duration.equals(track.duration)) return false;
+        if (averageSpeed != null ? !averageSpeed.equals(track.averageSpeed) : track.averageSpeed != null) return false;
+        if (maxSpeed != null ? !maxSpeed.equals(track.maxSpeed) : track.maxSpeed != null) return false;
+        return temperature != null ? temperature.equals(track.temperature) : track.temperature == null;
+
+    }
+
+    @Override
+    public int hashCode() {
+        int result = (int) (trackId ^ (trackId >>> 32));
+        result = 31 * result + date.hashCode();
+        result = 31 * result + distance.hashCode();
+        result = 31 * result + duration.hashCode();
+        result = 31 * result + (averageSpeed != null ? averageSpeed.hashCode() : 0);
+        result = 31 * result + (maxSpeed != null ? maxSpeed.hashCode() : 0);
+        result = 31 * result + (temperature != null ? temperature.hashCode() : 0);
+        return result;
     }
 }

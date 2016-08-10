@@ -26,7 +26,7 @@ public class User {
     @OneToMany(targetEntity = Track.class, cascade=CascadeType.ALL)
     private Map<Long, Track> tracks;
 
-    User(){}
+    public User(){}
 
     public User(String username, String password, String email) {
         this(username, password);
@@ -67,8 +67,9 @@ public class User {
         return tracks;
     }
 
-    public void addTrack(Track track){
-            tracks.put(track.getTrackId(), track);
+    public long addTrack(Track track){
+        tracks.put(track.getTrackId(), track);
+        return track.getTrackId();
     }
 
     public void removeTrack(Track track){

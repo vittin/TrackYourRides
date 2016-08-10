@@ -17,9 +17,11 @@ public interface TrackService {
 
     Map<Long, Track> getAllTracks();
 
+    Track getTrack(long trackId);
+
     Long addTrack(Track track);  //id;
 
     void deleteTrack(Long trackId); //all tracks;
 
-    Track updateTrack(Long trackId, Track track);
+    long updateTrack(Long trackId, Track track);
 }

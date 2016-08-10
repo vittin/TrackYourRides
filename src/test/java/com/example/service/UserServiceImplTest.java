@@ -1,7 +1,6 @@
 package com.example.service;
 
 import com.example.model.Token;
-import com.example.repository.TokenRepository;
 import com.example.model.User;
 import com.example.repository.UserRepository;
 import org.junit.Before;
@@ -14,9 +13,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.nullValue;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsNot.not;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 /**
  * Created by Mateusz on 2016-08-02.
@@ -26,7 +23,6 @@ public class UserServiceImplTest {
 
     private UserService userService;
     @Mock private UserRepository userRepo;
-    @Mock private TokenRepository tokenRepo;
     @Mock private AuthService authService;
     @Mock private User fakeUser;
 
@@ -35,7 +31,6 @@ public class UserServiceImplTest {
 
         this.userRepo = mock(UserRepository.class);
         this.authService = mock(AuthService.class);
-
         this.userService = new UserServiceImpl(userRepo, authService);
 
         this.fakeUser = new User("john", "hashedPassword", "email@email.com");
@@ -67,7 +62,7 @@ public class UserServiceImplTest {
         when(userRepo.findByEmail("email@email.com")).thenReturn(null);
 
         assertTrue(userService.userIsUnique(testedUser1));
-        assertTrue(userService.userIsUnique(testedUser1));
+        assertTrue(userService.userIsUnique(testedUser2));
 
     }
 
@@ -108,7 +103,6 @@ public class UserServiceImplTest {
         Token createdToken = userService.createTokenFor(1L, "3124h");
 
         assertThat(createdToken, is(token));
-        verify(tokenRepo).save(token);
 
     }
 

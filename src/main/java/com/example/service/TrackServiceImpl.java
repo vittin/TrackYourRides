@@ -4,6 +4,7 @@ import com.example.model.Track;
 import com.example.model.User;
 import com.example.repository.TrackRepository;
 import com.example.repository.UserRepository;
+import com.sun.istack.internal.Nullable;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.BeanWrapper;
 import org.springframework.beans.BeanWrapperImpl;
@@ -42,35 +43,47 @@ public class TrackServiceImpl implements TrackService {
     }
 
     @Override
+    @Nullable
+    public Track getTrack(long trackId){
+        return user.getTracks().get(trackId);
+    }
+
+    @Override
     public Long addTrack(Track track) {
 
-        user.addTrack(track);
+        long id = user.addTrack(track);
         userRepo.save(user);
 
-        return trackRepo.save(track).getTrackId();
+        return id;
     }
 
     @Override
     public void deleteTrack(Long trackId) {
 
-        Track track = trackRepo.findOne(trackId);
+        Track track = user.getTracks().get(trackId);
 
-        user.removeTrack(track);
-        userRepo.save(user);
-        trackRepo.delete(trackId);
+        if (track != null){
+            user.removeTrack(track);
+            userRepo.save(user);
+        }
+
     }
 
     @Override
-    public Track updateTrack(Long trackId, Track givenTrack) {
+    public long updateTrack(Long trackId, Track givenTrack) {
 
-        Track track = trackRepo.getOne(trackId);
-        copyNonNullProperties(givenTrack, track);
+        Track track = user.getTracks().get(trackId);
+        if (track != null){
+            copyNonNullProperties(givenTrack, track);
+            user.addTrack(track);
+        } else {
+            givenTrack.setTrackId(trackId);
+            user.addTrack(givenTrack);
+        }
 
-        user.addTrack(track);
         userRepo.save(user);
-        trackRepo.save(track);
 
-        return trackRepo.save(givenTrack);
+        return trackId;
 
     }
 

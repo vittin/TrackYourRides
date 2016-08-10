@@ -50,6 +50,19 @@ public class TrackRestController {
 
     }
 
+    @RequestMapping(value = "/{trackId}", method = RequestMethod.GET)
+    public HttpEntity<?> getTracks(@CookieValue(value = "sessionToken", defaultValue = NO_CONTENT) String cookie,
+                                   @PathVariable long trackId){
+
+        if(!isAuthorized(cookie)) {
+            return notValidSession();
+        }
+
+        Track track = trackService.getTrack(trackId);
+        return ResponseEntity.ok().body(track);
+
+    }
+
     @RequestMapping(value = "", method = RequestMethod.POST)
     public HttpEntity<?> addTrack(@CookieValue(value = "sessionToken", defaultValue = NO_CONTENT) String cookie,
                                        @RequestBody Track track){
@@ -59,7 +72,7 @@ public class TrackRestController {
         }
         System.out.println(track);
         long id = trackService.addTrack(track);
-        return ResponseEntity.created(URI.create("/"+id)).body(null);
+        return ResponseEntity.created(URI.create("/api/tracks/"+id)).body(id);
     }
 
     @RequestMapping(value = "/{trackId}", method = RequestMethod.DELETE)
@@ -83,9 +96,9 @@ public class TrackRestController {
             return notValidSession();
         }
 
-        trackService.updateTrack(trackId, track);
+        long id = trackService.updateTrack(trackId, track);
 
-        return ResponseEntity.accepted().body(null);
+        return ResponseEntity.created(URI.create("/"+id)).body(null);
     }
 
 
