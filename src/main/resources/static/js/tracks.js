@@ -169,7 +169,6 @@ var Track = {
         if (valuesMap.trackId == "new"){
             delete valuesMap.trackId;
         }
-
         return JSON.stringify(valuesMap);
     }
 };

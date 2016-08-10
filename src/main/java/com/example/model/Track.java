@@ -1,5 +1,7 @@
 package com.example.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.util.Date;
@@ -28,7 +30,10 @@ public class Track {
 
     private Integer temperature; //celcious
 
-    //private User user;
+    @ManyToOne(cascade = CascadeType.MERGE)
+    @JoinColumn(name = "user_id")
+    @JsonIgnore
+    private User user;
 
     //only for tests, can be safety join with second after rewrite tests;
     public Track(Integer distance, Integer duration, Integer averageSpeed, Integer temperature) {
@@ -101,6 +106,14 @@ public class Track {
 
     public void setTemperature(Integer temperature) {
         this.temperature = temperature;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
+    }
+
+    public User getUser() {
+        return user;
     }
 
     @Override

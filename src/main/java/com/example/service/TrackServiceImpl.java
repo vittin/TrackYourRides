@@ -51,7 +51,10 @@ public class TrackServiceImpl implements TrackService {
     @Override
     public Long addTrack(Track track) {
 
-        long id = user.addTrack(track);
+        track.setUser(user);
+        long id = trackRepo.save(track).getTrackId();
+        track.setTrackId(id);
+        user.addTrack(track);
         userRepo.save(user);
 
         return id;

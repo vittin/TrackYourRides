@@ -32,6 +32,10 @@ public class UserRestController {
     @Autowired
     UserRestController(UserService userService){
         this.userService = userService;
+
+        //todo delete
+        register(new User("mati", "mati", "mati@wp.pl"), "");
+        //todo delete
     }
 
     @RequestMapping(value = "", method = RequestMethod.POST)
