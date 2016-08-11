@@ -90,8 +90,12 @@ var Ajax = {
 
 var TrackDOM = {
     prependTrack: function(track){
-        console.log("track: ");
-        console.log(track);
+
+        if(!track.time){
+            track.time = DateService.getTime(track.date);
+            track.date = DateService.getDate(track.date);
+        }
+
         var trackElement = Track.create(track);
         $("#tracksTableBody").prepend(trackElement);
     },
@@ -100,23 +104,32 @@ var TrackDOM = {
         var newInput = this.newInput;
         var editableTrack = {
             trackId: "new",
-            date: newInput("text", 8, DateService.getDate()),
-            time: newInput("text", 5, DateService.getTime()),
-            distance: newInput("number", 4),
-            duration: newInput("text", 8),
-            averageSpeed: newInput("number", 2),
-            maxSpeed: newInput("number", 3),
-            temperature: newInput("number", 2)
+            date: newInput("text", 10, null, "yyyy:mm:dd", DateService.getDate()),
+            time: newInput("text", 5, null, "hh:ss", DateService.getTime()),
+            distance: newInput("number", 4, "km"),
+            duration: newInput("text", 5, "min"),
+            averageSpeed: newInput("number", 2, "km/h"),
+            maxSpeed: newInput("number", 3, "km/h"),
+            temperature: newInput("number", 2, "^C")
         };
 
         TrackDOM.prependTrack(editableTrack);
     },
-    newInput: function(type, maxLength, actualValue){
-        type = type || text;
+    newInput: function(type, maxLength, label, placeholder, actualValue){
+        type = type || "text";
+        placeholder = placeholder || "";
+        label = label || "";
         maxLength = maxLength || 20;
 
-        var template1 = `<input class="track-input" type=${type} value=${actualValue} maxlength="${maxLength}" />`;
-        var template2 = `<input class="track-input" type=${type} maxlength="${maxLength}" />`;
+        var template1 =
+                `<input class="track-input" type=${type} value=${actualValue} maxlength="${maxLength}" placeholder="${placeholder}" />` +
+                `<label> ${label} </label>`;
+
+
+
+        var template2 =
+                `<input class="track-input" type=${type} maxlength="${maxLength}" placeholder="${placeholder}" />` +
+                `<label> ${label} </label>`;
 
         return (actualValue) ? template1 : template2;
     },
@@ -139,9 +152,23 @@ var TrackDOM = {
 
     enableSorting: function(){
         $("#tracksTable").DataTable({
-            scrollY: 300,
+            scrollX: true,
+            scrollCollapse: true,
             paging: false,
             searching: false,
+            columnDefs: [
+                { width: '10%', targets: 0 },
+                { width: '10%', targets: 1 },
+                { width: '10%', targets: 2 },
+                { width: '10%', targets: 3 },
+                { width: '10%', targets: 4 },
+                { width: '10%', targets: 5 },
+                { width: '10%', targets: 6 }
+            ],
+            fixedColumns: true,
+            language: {
+                emptyTable: "You have no rides. <a href='#' onclick=Button.newTrackLink()>Add something.</a>"
+            }
         });
     }
 };
@@ -164,7 +191,7 @@ var Track = {
 
     toJson: function(){
         var valuesMap = TrackDOM.getValues();
-        valuesMap.date = (DateService.parseDate(valuesMap.date, valuesMap.time)).toString();
+        valuesMap.date = (DateService.parseDateAndTime(valuesMap.date, valuesMap.time)).toString();
         delete valuesMap.time;
         if (valuesMap.trackId == "new"){
             delete valuesMap.trackId;
@@ -200,26 +227,37 @@ var Button = {
     newTrack: function() {
         this.trigger();
         TrackDOM.newTrack();
+    },
+
+    newTrackLink(){
+        $(".dataTables_empty").hide();
+        this.newTrack();
     }
 };
 
 
 
 var DateService = {
-    getDate: function(){
-        return this.stringifyDate(new Date(), 0, 10);
+
+    DATE: "DATE", TIME: "TIME",
+
+    getDate: function (long){
+        long = long || +new Date();
+        return this.stringifyDate(long, 0, 10);
     },
 
-    getTime: function(){
-        return this.stringifyDate(new Date(), 11, 16);
+    getTime: function (long){
+        long = long || +new Date();
+        return this.stringifyDate(long, 11, 16);
     },
 
-    stringifyDate: function(date, start, end) {
+    stringifyDate: function(long, start, end) {
 
+        var date = new Date(long);
         return date.toISOString().slice(start, end).replace(/-/g, ".");
     },
 
-    parseDate: function(dateString, timeString){
+    parseDateAndTime: function (dateString, timeString){
         if (timeString.length == 4){
             timeString = "0"+timeString;
         }

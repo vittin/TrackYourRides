@@ -6,9 +6,6 @@
 	<groupId>com.example</groupId>
 	<artifactId>trackyourrides</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-    <modules>
-        <module>TrackYourRidesClient</module>
-    </modules>
     <packaging>pom</packaging>
 
 	<name>TrackYourRides</name>
